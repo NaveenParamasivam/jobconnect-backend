@@ -5,11 +5,14 @@ import com.jobconnect.dto.request.JobApplicationRequest;
 import com.jobconnect.dto.response.JobApplicationResponse;
 import com.jobconnect.entity.JobApplication;
 import com.jobconnect.service.ApplicationService;
+import com.jobconnect.util.JwtUtil;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -22,13 +25,18 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(SeekerController.class)
+@WebMvcTest(
+        controllers = SeekerController.class,
+        excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class
+)
 @DisplayName("SeekerController — Integration Tests")
 class SeekerControllerTest {
 
     @Autowired MockMvc            mockMvc;
     @Autowired ObjectMapper       objectMapper;
     @MockBean  ApplicationService applicationService;
+    @MockBean  JwtUtil            jwtUtil;
+    @MockBean  UserDetailsService userDetailsService;
 
     private JobApplicationResponse sampleApp;
 

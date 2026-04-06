@@ -9,11 +9,14 @@ import com.jobconnect.entity.Job;
 import com.jobconnect.entity.JobApplication;
 import com.jobconnect.service.ApplicationService;
 import com.jobconnect.service.JobService;
+import com.jobconnect.util.JwtUtil;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -27,7 +30,10 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(EmployerController.class)
+@WebMvcTest(
+        controllers = EmployerController.class,
+        excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class
+)
 @DisplayName("EmployerController — Integration Tests")
 class EmployerControllerTest {
 
@@ -35,10 +41,12 @@ class EmployerControllerTest {
     @Autowired ObjectMapper  objectMapper;
     @MockBean  JobService    jobService;
     @MockBean  ApplicationService applicationService;
+    @MockBean  JwtUtil       jwtUtil;
+    @MockBean  UserDetailsService userDetailsService;
 
-    private JobResponse          sampleJob;
+    private JobResponse           sampleJob;
     private JobApplicationResponse sampleApp;
-    private JobRequest           validJobRequest;
+    private JobRequest            validJobRequest;
 
     @BeforeEach
     void setUp() {
@@ -67,8 +75,6 @@ class EmployerControllerTest {
         validJobRequest.setCategory("Engineering");
     }
 
-    // ── Job Management ───────────────────────────────────────────
-
     @Test
     @WithMockUser(username = "acme@corp.com", roles = "EMPLOYER")
     @DisplayName("POST /api/employer/jobs — 201 Created on valid job request")
@@ -89,7 +95,7 @@ class EmployerControllerTest {
     @WithMockUser(username = "acme@corp.com", roles = "EMPLOYER")
     @DisplayName("POST /api/employer/jobs — 400 Bad Request on missing required fields")
     void createJob_missingTitle_returns400() throws Exception {
-        validJobRequest.setTitle("");   // blank — violates @NotBlank
+        validJobRequest.setTitle("");
 
         mockMvc.perform(post("/api/employer/jobs")
                         .with(csrf())
@@ -146,8 +152,6 @@ class EmployerControllerTest {
                         .content(objectMapper.writeValueAsString(validJobRequest)))
                 .andExpect(status().isForbidden());
     }
-
-    // ── Application Management ───────────────────────────────────
 
     @Test
     @WithMockUser(username = "acme@corp.com", roles = "EMPLOYER")

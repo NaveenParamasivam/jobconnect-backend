@@ -32,10 +32,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ApiResponse.error(ex.getMessage()));
     }
-
+/*
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponse<Void>> handleBadCredentials(BadCredentialsException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error("Invalid email or password"));
+    }
+*/
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleBadCredentials(BadCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error("Invalid email or password"));
     }
 

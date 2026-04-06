@@ -2,9 +2,13 @@ package com.jobconnect.dto.request;
 
 import com.jobconnect.entity.User;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RegisterRequest {
 
     @NotBlank(message = "Full name is required")

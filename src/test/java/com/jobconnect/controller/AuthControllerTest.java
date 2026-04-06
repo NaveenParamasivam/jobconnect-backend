@@ -6,12 +6,14 @@ import com.jobconnect.dto.request.RegisterRequest;
 import com.jobconnect.dto.response.AuthResponse;
 import com.jobconnect.entity.User;
 import com.jobconnect.service.AuthService;
+import com.jobconnect.util.JwtUtil;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -20,13 +22,18 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(AuthController.class)
+@WebMvcTest(
+        controllers = AuthController.class,
+        excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class
+)
 @DisplayName("AuthController — Integration Tests")
 class AuthControllerTest {
 
-    @Autowired MockMvc mockMvc;
+    @Autowired MockMvc      mockMvc;
     @Autowired ObjectMapper objectMapper;
-    @MockBean  AuthService authService;
+    @MockBean  AuthService  authService;
+    @MockBean  JwtUtil      jwtUtil;
+    @MockBean  UserDetailsService userDetailsService;
 
     private AuthResponse mockAuthResponse;
 
@@ -63,7 +70,7 @@ class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/register — 400 Bad Request on missing fields")
     void register_missingFields_returns400() throws Exception {
-        RegisterRequest req = new RegisterRequest(); // empty
+        RegisterRequest req = new RegisterRequest();
 
         mockMvc.perform(post("/api/auth/register")
                         .with(csrf())

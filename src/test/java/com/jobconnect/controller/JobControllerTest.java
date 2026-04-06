@@ -3,10 +3,13 @@ package com.jobconnect.controller;
 import com.jobconnect.dto.response.JobResponse;
 import com.jobconnect.entity.Job;
 import com.jobconnect.service.JobService;
+import com.jobconnect.util.JwtUtil;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -18,12 +21,17 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(JobController.class)
+@WebMvcTest(
+        controllers = JobController.class,
+        excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class
+)
 @DisplayName("JobController — Integration Tests")
 class JobControllerTest {
 
-    @Autowired MockMvc   mockMvc;
+    @Autowired MockMvc    mockMvc;
     @MockBean  JobService jobService;
+    @MockBean  JwtUtil    jwtUtil;
+    @MockBean  UserDetailsService userDetailsService;
 
     private JobResponse sampleJob;
 
@@ -53,8 +61,8 @@ class JobControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/jobs/{id} — returns single job by id")
     @WithMockUser
+    @DisplayName("GET /api/jobs/{id} — returns single job by id")
     void getJobById_exists_returns200() throws Exception {
         when(jobService.getJobById(1L)).thenReturn(sampleJob);
 
