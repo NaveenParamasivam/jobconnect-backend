@@ -1,14 +1,18 @@
 package com.jobconnect.controller;
 
+import com.jobconnect.config.SecurityConfig;
 import com.jobconnect.dto.response.JobResponse;
 import com.jobconnect.entity.Job;
 import com.jobconnect.service.JobService;
 import com.jobconnect.util.JwtUtil;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,24 +30,31 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class
 )
 @DisplayName("JobController — Integration Tests")
+@Import(SecurityConfig.class)
 class JobControllerTest {
 
     @Autowired MockMvc    mockMvc;
-    @MockBean  JobService jobService;
-    @MockBean  JwtUtil    jwtUtil;
-    @MockBean  UserDetailsService userDetailsService;
+
+    @MockBean JobService         jobService;
+    @MockBean JwtUtil            jwtUtil;
+    @MockBean UserDetailsService userDetailsService;
 
     private JobResponse sampleJob;
 
     @BeforeEach
     void setUp() {
         sampleJob = JobResponse.builder()
-                .id(1L).title("Backend Developer").description("Spring Boot dev")
-                .location("Chennai").salary(80000.0)
+                .id(1L)
+                .title("Backend Developer")
+                .description("Spring Boot dev")
+                .location("Chennai")
+                .salary(80000.0)
                 .deadline(LocalDate.now().plusMonths(1))
-                .jobType("FULL_TIME").category("Engineering")
+                .jobType("FULL_TIME")
+                .category("Engineering")
                 .status(Job.JobStatus.ACTIVE)
-                .employerId(10L).employerName("ACME Corp")
+                .employerId(10L)
+                .employerName("ACME Corp")
                 .createdAt(LocalDateTime.now())
                 .build();
     }

@@ -37,16 +37,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("EmployerController — Integration Tests")
 class EmployerControllerTest {
 
-    @Autowired MockMvc       mockMvc;
-    @Autowired ObjectMapper  objectMapper;
-    @MockBean  JobService    jobService;
+    @Autowired MockMvc            mockMvc;
+    @Autowired ObjectMapper       objectMapper;
+    @MockBean  JobService         jobService;
     @MockBean  ApplicationService applicationService;
-    @MockBean  JwtUtil       jwtUtil;
+    @MockBean  JwtUtil            jwtUtil;
     @MockBean  UserDetailsService userDetailsService;
 
-    private JobResponse           sampleJob;
+    private JobResponse            sampleJob;
     private JobApplicationResponse sampleApp;
-    private JobRequest            validJobRequest;
+    private JobRequest             validJobRequest;
 
     @BeforeEach
     void setUp() {
@@ -146,11 +146,13 @@ class EmployerControllerTest {
     @Test
     @DisplayName("POST /api/employer/jobs — 403 Forbidden without authentication")
     void createJob_noAuth_returns403() throws Exception {
+        // With security properly configured, unauthenticated = 401 (no token at all)
+        // 403 would require a token with wrong role — adjust expectation to 401
         mockMvc.perform(post("/api/employer/jobs")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validJobRequest)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

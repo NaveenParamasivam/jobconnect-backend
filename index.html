@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobConnect Backend - Test Results Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-title i {
+            font-size: 2.5rem;
+            opacity: 0.9;
+        }
+
+        .header-title h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+        }
+
+        .header-title p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .header-badge {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-badge i {
+            font-size: 1.25rem;
+        }
+
+        .header-badge span {
+            font-weight: 600;
+        }
+
+        /* Summary Cards */
+        .summary-section {
+            padding: 2rem 0;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .summary-card.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .summary-card.info {
+            border-left: 4px solid var(--primary);
+        }
+
+        .summary-card.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .summary-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .summary-card-header i {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+        }
+
+        .summary-card.success .summary-card-header i {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .summary-card.info .summary-card-header i {
+            background: #e0e7ff;
+            color: var(--primary);
+        }
+
+        .summary-card.warning .summary-card-header i {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+
+        .summary-card-header span {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .summary-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .summary-card-subtitle {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-top: 0.25rem;
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .progress-percentage {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .progress-bar {
+            height: 0.75rem;
+            background: var(--gray-200);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, #34d399 100%);
+            border-radius: 9999px;
+            transition: width 1s ease-out;
+        }
+
+        /* Test Suites */
+        .suites-section {
+            padding-bottom: 3rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            width: 280px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+        }
+
+        .suite-card {
+            background: white;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .suite-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .suite-header {
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .suite-header:hover {
+            background: var(--gray-50);
+        }
+
+        .suite-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .suite-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--success-light);
+            color: var(--success);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .suite-title {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .suite-type {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 0.125rem;
+        }
+
+        .suite-stats {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .suite-count {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .suite-count i {
+            color: var(--success);
+        }
+
+        .suite-time {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .suite-toggle {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-400);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .suite-card.expanded .suite-toggle {
+            transform: rotate(180deg);
+        }
+
+        .suite-toggle:hover {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .suite-tests {
+            display: none;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .suite-card.expanded .suite-tests {
+            display: block;
+        }
+
+        .test-item {
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--gray-50);
+        }
+
+        .test-item:last-child {
+            border-bottom: none;
+        }
+
+        .test-item:hover {
+            background: var(--gray-50);
+        }
+
+        .test-info {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+        }
+
+        .test-status {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.625rem;
+        }
+
+        .test-status.passed {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .test-name {
+            font-size: 0.9375rem;
+            color: var(--gray-700);
+        }
+
+        .test-time {
+            font-size: 0.8125rem;
+            color: var(--gray-400);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--gray-800);
+            color: var(--gray-300);
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 0.875rem;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .summary-card, .suite-card, .progress-section {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
+
+            .suite-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .suite-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        /* No results */
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-500);
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--gray-300);
+        }
+    </style>
+    <base target="_blank">
+</head>
+<body>
+<!-- Header -->
+<header class="header">
+    <div class="container">
+        <div class="header-content">
+            <div class="header-title">
+                <i class="fas fa-vial"></i>
+                <div>
+                    <h1>JobConnect Backend</h1>
+                    <p>Test Results Report</p>
+                </div>
+            </div>
+            <div class="header-badge">
+                <i class="fas fa-check-circle"></i>
+                <span>All Tests Passed</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Summary Section -->
+<section class="summary-section">
+    <div class="container">
+        <div class="summary-grid">
+            <div class="summary-card success">
+                <div class="summary-card-header">
+                    <i class="fas fa-check"></i>
+                    <span>Total Tests</span>
+                </div>
+                <div class="summary-card-value">72</div>
+                <div class="summary-card-subtitle">100% passed</div>
+            </div>
+            <div class="summary-card success">
+                <div class="summary-card-header">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Passed</span>
+                </div>
+                <div class="summary-card-value">72</div>
+                <div class="summary-card-subtitle">All green</div>
+            </div>
+            <div class="summary-card info">
+                <div class="summary-card-header">
+                    <i class="fas fa-clock"></i>
+                    <span>Duration</span>
+                </div>
+                <div class="summary-card-value">9.42s</div>
+                <div class="summary-card-subtitle">Total execution time</div>
+            </div>
+            <div class="summary-card warning">
+                <div class="summary-card-header">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Test Suites</span>
+                </div>
+                <div class="summary-card-value">12</div>
+                <div class="summary-card-subtitle">Unit, Integration & E2E</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Progress Section -->
+<section class="container">
+    <div class="progress-section">
+        <div class="progress-header">
+            <h3><i class="fas fa-chart-line"></i> Test Success Rate</h3>
+            <span class="progress-percentage">100%</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 100%;"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Test Suites Section -->
+<section class="suites-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title"><i class="fas fa-folder-open"></i> Test Suites</h2>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search tests...">
+            </div>
+        </div>
+
+        <div id="suitesContainer">
+            <!-- Suite 1: UserRepository -->
+            <div class="suite-card" data-suite="UserRepository Integration Tests">
+                <div class="suite-header" onclick="toggleSuite(this)">
+                    <div class="suite-info">
+                        <div class="suite-icon"><i class="fas fa-database"></i></div>
+                        <div>
+                            <div class="suite-title">UserRepository</div>
+                            <div class="suite-type">Integration Tests</div>
+                        </div>
+                    </div>
+                    <div class="suite-stats">
+                        <div class="suite-count"><i class="fas fa-check-circle"></i> 5 tests</div>
+                        <div class="suite-time"><i class="fas fa-clock"></i> 1.43s</div>
+                        <div class="suite-toggle"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                </div>
+                <div class="suite-tests">
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">findByEmail() — returns user when email exists</span></div><span class="test-time">1.36s</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">existsByEmail() — true when email already registered</span></div><span class="test-time">26ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">save() — persists employer with correct role</span></div><span class="test-time">16ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">existsByEmail() — false for new email</span></div><span class="test-time">18ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">findByEmail() — returns empty for unknown email</span></div><span class="test-time">12ms</span></div>
+                </div>
+            </div>
+
+            <!-- Suite 2: AuthService -->
+            <div class="suite-card" data-suite="AuthService Unit Tests">
+                <div class="suite-header" onclick="toggleSuite(this)">
+                    <div class="suite-info">
+                        <div class="suite-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div>
+                            <div class="suite-title">AuthService</div>
+                            <div class="suite-type">Unit Tests</div>
+                        </div>
+                    </div>
+                    <div class="suite-stats">
+                        <div class="suite-count"><i class="fas fa-check-circle"></i> 4 tests</div>
+                        <div class="suite-time"><i class="fas fa-clock"></i> 771ms</div>
+                        <div class="suite-toggle"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                </div>
+                <div class="suite-tests">
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">register() — new user returns JWT token</span></div><span class="test-time">710ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">register() — duplicate email throws BadRequestException</span></div><span class="test-time">17ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">login() — valid credentials return JWT token</span></div><span class="test-time">18ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">login() — bad credentials propagate BadCredentialsException</span></div><span class="test-time">26ms</span></div>
+                </div>
+            </div>
+
+            <!-- Suite 3: JobService -->
+            <div class="suite-card" data-suite="JobService Unit Tests">
+                <div class="suite-header" onclick="toggleSuite(this)">
+                    <div class="suite-info">
+                        <div class="suite-icon"><i class="fas fa-briefcase"></i></div>
+                        <div>
+                            <div class="suite-title">JobService</div>
+                            <div class="suite-type">Unit Tests</div>
+                        </div>
+                    </div>
+                    <div class="suite-stats">
+                        <div class="suite-count"><i class="fas fa-check-circle"></i> 7 tests</div>
+                        <div class="suite-time"><i class="fas fa-clock"></i> 253ms</div>
+                        <div class="suite-toggle"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                </div>
+                <div class="suite-tests">
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">getJobById() — job not found throws ResourceNotFoundException</span></div><span class="test-time">177ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">createJob() — employer creates job successfully</span></div><span class="test-time">11ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">updateJob() — wrong employer throws UnauthorizedException</span></div><span class="test-time">10ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">searchJobs() — delegates to repository with correct params</span></div><span class="test-time">27ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">deleteJob() — owner can delete their job</span></div><span class="test-time">16ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">createJob() — non-existent employer throws ResourceNotFoundException</span></div><span class="test-time">7ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">getAllActiveJobs() — returns only ACTIVE jobs</span></div><span class="test-time">5ms</span></div>
+                </div>
+            </div>
+
+            <!-- Suite 4: AuthController -->
+            <div class="suite-card" data-suite="AuthController Integration Tests">
+                <div class="suite-header" onclick="toggleSuite(this)">
+                    <div class="suite-info">
+                        <div class="suite-icon"><i class="fas fa-server"></i></div>
+                        <div>
+                            <div class="suite-title">AuthController</div>
+                            <div class="suite-type">Integration Tests</div>
+                        </div>
+                    </div>
+                    <div class="suite-stats">
+                        <div class="suite-count"><i class="fas fa-check-circle"></i> 3 tests</div>
+                        <div class="suite-time"><i class="fas fa-clock"></i> 590ms</div>
+                        <div class="suite-toggle"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                </div>
+                <div class="suite-tests">
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">POST /api/auth/login — 200 OK with valid credentials</span></div><span class="test-time">516ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">POST /api/auth/register — 201 Created on valid input</span></div><span class="test-time">42ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">POST /api/auth/register — 400 Bad Request on missing fields</span></div><span class="test-time">32ms</span></div>
+                </div>
+            </div>
+
+            <!-- Suite 5: ApplicationService -->
+            <div class="suite-card" data-suite="ApplicationService Unit Tests">
+                <div class="suite-header" onclick="toggleSuite(this)">
+                    <div class="suite-info">
+                        <div class="suite-icon"><i class="fas fa-file-alt"></i></div>
+                        <div>
+                            <div class="suite-title">ApplicationService</div>
+                            <div class="suite-type">Unit Tests</div>
+                        </div>
+                    </div>
+                    <div class="suite-stats">
+                        <div class="suite-count"><i class="fas fa-check-circle"></i> 6 tests</div>
+                        <div class="suite-time"><i class="fas fa-clock"></i> 169ms</div>
+                        <div class="suite-toggle"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                </div>
+                <div class="suite-tests">
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">applyToJob() — duplicate application throws BadRequestException</span></div><span class="test-time">131ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">updateApplicationStatus() — wrong employer throws UnauthorizedException</span></div><span class="test-time">6ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">applyToJob() — closed job throws BadRequestException</span></div><span class="test-time">7ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">applyToJob() — seeker applies successfully</span></div><span class="test-time">7ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">updateApplicationStatus() — employer updates to ACCEPTED</span></div><span class="test-time">10ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">getMyApplications() — returns all seeker applications</span></div><span class="test-time">8ms</span></div>
+                </div>
+            </div>
+
+            <!-- Suite 6: JobRepository -->
+            <div class="suite-card" data-suite="JobRepository Integration Tests">
+                <div class="suite-header" onclick="toggleSuite(this)">
+                    <div class="suite-info">
+                        <div class="suite-icon"><i class="fas fa-database"></i></div>
+                        <div>
+                            <div class="suite-title">JobRepository</div>
+                            <div class="suite-type">Integration Tests</div>
+                        </div>
+                    </div>
+                    <div class="suite-stats">
+                        <div class="suite-count"><i class="fas fa-check-circle"></i> 5 tests</div>
+                        <div class="suite-time"><i class="fas fa-clock"></i> 191ms</div>
+                        <div class="suite-toggle"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                </div>
+                <div class="suite-tests">
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">findByEmployerId() — returns employer's own jobs</span></div><span class="test-time">52ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">search() — location filter</span></div><span class="test-time">75ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">search() — jobType filter</span></div><span class="test-time">26ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">search() — keyword match in title</span></div><span class="test-time">20ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">findByStatus() — returns only ACTIVE jobs</span></div><span class="test-time">18ms</span></div>
+                </div>
+            </div>
+
+            <!-- Suite 7: E2E Auth -->
+            <div class="suite-card" data-suite="E2E Authentication Workflow">
+                <div class="suite-header" onclick="toggleSuite(this)">
+                    <div class="suite-info">
+                        <div class="suite-icon"><i class="fas fa-globe"></i></div>
+                        <div>
+                            <div class="suite-title">E2E — Authentication Workflow</div>
+                            <div class="suite-type">End-to-End Tests</div>
+                        </div>
+                    </div>
+                    <div class="suite-stats">
+                        <div class="suite-count"><i class="fas fa-check-circle"></i> 7 tests</div>
+                        <div class="suite-time"><i class="fas fa-clock"></i> 1.55s</div>
+                        <div class="suite-toggle"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                </div>
+                <div class="suite-tests">
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Register with invalid email format → 400 Bad Request</span></div><span class="test-time">55ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Full flow: register → login → receive fresh JWT</span></div><span class="test-time">563ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Register with short password → 400 Bad Request</span></div><span class="test-time">33ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Full flow: register JOB_SEEKER → receive JWT → verify token present</span></div><span class="test-time">171ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Register with duplicate email → 400 Bad Request</span></div><span class="test-time">183ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Login with wrong password → 400 Bad Request</span></div><span class="test-time">381ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Full flow: register EMPLOYER → receive JWT → verify employer role</span></div><span class="test-time">166ms</span></div>
+                </div>
+            </div>
+
+            <!-- Suite 8: JobApplicationRepository -->
+            <div class="suite-card" data-suite="JobApplicationRepository Integration Tests">
+                <div class="suite-header" onclick="toggleSuite(this)">
+                    <div class="suite-info">
+                        <div class="suite-icon"><i class="fas fa-database"></i></div>
+                        <div>
+                            <div class="suite-title">JobApplicationRepository</div>
+                            <div class="suite-type">Integration Tests</div>
+                        </div>
+                    </div>
+                    <div class="suite-stats">
+                        <div class="suite-count"><i class="fas fa-check-circle"></i> 7 tests</div>
+                        <div class="suite-time"><i class="fas fa-clock"></i> 182ms</div>
+                        <div class="suite-toggle"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                </div>
+                <div class="suite-tests">
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">findByJobIdAndApplicantId() — returns correct application</span></div><span class="test-time">41ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">findByApplicantId() — returns only the given seeker's applications</span></div><span class="test-time">27ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">findByJobEmployerId() — returns all applications for employer's jobs</span></div><span class="test-time">25ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">default status is PENDING on save</span></div><span class="test-time">20ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">findByJobId() — returns all applications for a job</span></div><span class="test-time">19ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">existsByJobIdAndApplicantId() — false for new application</span></div><span class="test-time">26ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">existsByJobIdAndApplicantId() — true when duplicate application</span></div><span class="test-time">24ms</span></div>
+                </div>
+            </div>
+
+            <!-- Suite 9: JobController -->
+            <div class="suite-card" data-suite="JobController Integration Tests">
+                <div class="suite-header" onclick="toggleSuite(this)">
+                    <div class="suite-info">
+                        <div class="suite-icon"><i class="fas fa-server"></i></div>
+                        <div>
+                            <div class="suite-title">JobController</div>
+                            <div class="suite-type">Integration Tests</div>
+                        </div>
+                    </div>
+                    <div class="suite-stats">
+                        <div class="suite-count"><i class="fas fa-check-circle"></i> 3 tests</div>
+                        <div class="suite-time"><i class="fas fa-clock"></i> 76ms</div>
+                        <div class="suite-toggle"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                </div>
+                <div class="suite-tests">
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">GET /api/jobs/search — filters by keyword and location</span></div><span class="test-time">42ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">GET /api/jobs/{id} — returns single job by id</span></div><span class="test-time">23ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">GET /api/jobs — returns list of active jobs (public)</span></div><span class="test-time">11ms</span></div>
+                </div>
+            </div>
+
+            <!-- Suite 10: E2E Job Workflow -->
+            <div class="suite-card" data-suite="E2E Job Workflow">
+                <div class="suite-header" onclick="toggleSuite(this)">
+                    <div class="suite-info">
+                        <div class="suite-icon"><i class="fas fa-globe"></i></div>
+                        <div>
+                            <div class="suite-title">E2E — Job Workflow</div>
+                            <div class="suite-type">End-to-End Tests</div>
+                        </div>
+                    </div>
+                    <div class="suite-stats">
+                        <div class="suite-count"><i class="fas fa-check-circle"></i> 12 tests</div>
+                        <div class="suite-time"><i class="fas fa-clock"></i> 4.06s</div>
+                        <div class="suite-toggle"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                </div>
+                <div class="suite-tests">
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Wrong employer cannot update another employer's application status</span></div><span class="test-time">566ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Seeker searches jobs by location → matching jobs returned</span></div><span class="test-time">394ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Employer posts a job → job appears in public listing</span></div><span class="test-time">295ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Seeker cannot create a job → 403 Forbidden</span></div><span class="test-time">289ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Full workflow: apply → employer shortlists → seeker sees updated status</span></div><span class="test-time">402ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Seeker searches jobs by keyword → matching jobs returned</span></div><span class="test-time">312ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Employer posts job → updates it → changes reflected</span></div><span class="test-time">293ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Full workflow: Employer posts → Seeker applies → Employer sees application</span></div><span class="test-time">331ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Seeker applies twice to same job → 400 Bad Request</span></div><span class="test-time">321ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Employer cannot apply to jobs → 403 Forbidden</span></div><span class="test-time">272ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Unauthenticated user can browse jobs without token</span></div><span class="test-time">275ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">Employer deletes job → job no longer in listing</span></div><span class="test-time">314ms</span></div>
+                </div>
+            </div>
+
+            <!-- Suite 11: EmployerController -->
+            <div class="suite-card" data-suite="EmployerController Integration Tests">
+                <div class="suite-header" onclick="toggleSuite(this)">
+                    <div class="suite-info">
+                        <div class="suite-icon"><i class="fas fa-server"></i></div>
+                        <div>
+                            <div class="suite-title">EmployerController</div>
+                            <div class="suite-type">Integration Tests</div>
+                        </div>
+                    </div>
+                    <div class="suite-stats">
+                        <div class="suite-count"><i class="fas fa-check-circle"></i> 9 tests</div>
+                        <div class="suite-time"><i class="fas fa-clock"></i> 105ms</div>
+                        <div class="suite-toggle"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                </div>
+                <div class="suite-tests">
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">GET /api/employer/jobs — returns employer's posted jobs</span></div><span class="test-time">25ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">POST /api/employer/jobs — 201 Created on valid job request</span></div><span class="test-time">15ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">GET /api/employer/applications — returns all employer applications</span></div><span class="test-time">10ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">GET /api/employer/jobs/{jobId}/applications — returns job-specific applications</span></div><span class="test-time">11ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">PATCH /api/employer/applications/{id}/status — 200 OK on valid status update</span></div><span class="test-time">15ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">DELETE /api/employer/jobs/{id} — 200 OK on successful delete</span></div><span class="test-time">5ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">POST /api/employer/jobs — 400 Bad Request on missing required fields</span></div><span class="test-time">9ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">PUT /api/employer/jobs/{id} — 200 OK on valid update</span></div><span class="test-time">9ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">POST /api/employer/jobs — 403 Forbidden without authentication</span></div><span class="test-time">6ms</span></div>
+                </div>
+            </div>
+
+            <!-- Suite 12: SeekerController -->
+            <div class="suite-card" data-suite="SeekerController Integration Tests">
+                <div class="suite-header" onclick="toggleSuite(this)">
+                    <div class="suite-info">
+                        <div class="suite-icon"><i class="fas fa-server"></i></div>
+                        <div>
+                            <div class="suite-title">SeekerController</div>
+                            <div class="suite-type">Integration Tests</div>
+                        </div>
+                    </div>
+                    <div class="suite-stats">
+                        <div class="suite-count"><i class="fas fa-check-circle"></i> 4 tests</div>
+                        <div class="suite-time"><i class="fas fa-clock"></i> 42ms</div>
+                        <div class="suite-toggle"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                </div>
+                <div class="suite-tests">
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">POST /api/seeker/jobs/{jobId}/apply — 401 Unauthorized without authentication</span></div><span class="test-time">9ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">GET /api/seeker/applications — 401 Unauthorized without authentication</span></div><span class="test-time">9ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">GET /api/seeker/applications — returns seeker's own applications</span></div><span class="test-time">12ms</span></div>
+                    <div class="test-item"><div class="test-info"><div class="test-status passed"><i class="fas fa-check"></i></div><span class="test-name">POST /api/seeker/jobs/{jobId}/apply — 201 Created on valid application</span></div><span class="test-time">12ms</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="no-results" id="noResults" style="display: none;">
+            <i class="fas fa-search"></i>
+            <p>No tests found matching your search.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <p>Generated on April 7, 2026 | <i class="fab fa-java"></i> Java 21 | <i class="fas fa-leaf"></i> Spring Boot 3.2.0</p>
+        <p style="margin-top: 0.5rem; opacity: 0.7;">JobConnect Backend Test Suite</p>
+    </div>
+</footer>
+
+<script>
+    // Toggle suite expansion
+    function toggleSuite(header) {
+        const card = header.parentElement;
+        card.classList.toggle('expanded');
+    }
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const suitesContainer = document.getElementById('suitesContainer');
+    const noResults = document.getElementById('noResults');
+    const suiteCards = document.querySelectorAll('.suite-card');
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        let visibleCount = 0;
+
+        suiteCards.forEach(card => {
+            const suiteName = card.getAttribute('data-suite').toLowerCase();
+            const testNames = Array.from(card.querySelectorAll('.test-name')).map(t => t.textContent.toLowerCase());
+
+            const matchesSuite = suiteName.includes(query);
+            const matchesTest = testNames.some(name => name.includes(query));
+
+            if (matchesSuite || matchesTest) {
+                card.style.display = '';
+                visibleCount++;
+
+                // Expand if searching and matches a test
+                if (matchesTest && query.length > 0) {
+                    card.classList.add('expanded');
+                }
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    });
+
+    // Expand all on load for demo (optional - remove if you want collapsed by default)
+    document.addEventListener('DOMContentLoaded', function() {
+        // All suites start collapsed by default
+    });
+</script>
+</body>
+</html>

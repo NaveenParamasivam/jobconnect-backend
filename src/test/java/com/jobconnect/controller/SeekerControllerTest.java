@@ -70,13 +70,14 @@ class SeekerControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/seeker/jobs/{jobId}/apply — 403 Forbidden without authentication")
-    void apply_noAuth_returns403() throws Exception {
+    @DisplayName("POST /api/seeker/jobs/{jobId}/apply — 401 Unauthorized without authentication")
+    void apply_noAuth_returns401() throws Exception {
+        // No auth token = 401 Unauthorized (Spring Security default for missing credentials)
         mockMvc.perform(post("/api/seeker/jobs/10/apply")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -95,9 +96,10 @@ class SeekerControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/seeker/applications — 403 Forbidden without authentication")
-    void getMyApplications_noAuth_returns403() throws Exception {
+    @DisplayName("GET /api/seeker/applications — 401 Unauthorized without authentication")
+    void getMyApplications_noAuth_returns401() throws Exception {
+        // No auth token = 401 Unauthorized
         mockMvc.perform(get("/api/seeker/applications"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 }

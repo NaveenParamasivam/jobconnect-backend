@@ -1,17 +1,21 @@
 package com.jobconnect.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jobconnect.config.SecurityConfig;
 import com.jobconnect.dto.request.LoginRequest;
 import com.jobconnect.dto.request.RegisterRequest;
 import com.jobconnect.dto.response.AuthResponse;
 import com.jobconnect.entity.User;
 import com.jobconnect.service.AuthService;
 import com.jobconnect.util.JwtUtil;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,22 +31,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class
 )
 @DisplayName("AuthController — Integration Tests")
+@Import(SecurityConfig.class)
 class AuthControllerTest {
 
-    @Autowired MockMvc      mockMvc;
-    @Autowired ObjectMapper objectMapper;
-    @MockBean  AuthService  authService;
-    @MockBean  JwtUtil      jwtUtil;
-    @MockBean  UserDetailsService userDetailsService;
+    @Autowired MockMvc       mockMvc;
+    @Autowired ObjectMapper  objectMapper;
+
+    @MockBean AuthService        authService;
+    @MockBean JwtUtil            jwtUtil;
+    @MockBean UserDetailsService userDetailsService;
 
     private AuthResponse mockAuthResponse;
 
     @BeforeEach
     void setUp() {
         mockAuthResponse = AuthResponse.builder()
-                .token("mock.jwt.token").tokenType("Bearer")
-                .userId(1L).email("jane@test.com")
-                .fullName("Jane Seeker").role(User.Role.JOB_SEEKER)
+                .token("mock.jwt.token")
+                .tokenType("Bearer")
+                .userId(1L)
+                .email("jane@test.com")
+                .fullName("Jane Seeker")
+                .role(User.Role.JOB_SEEKER)
                 .build();
     }
 

@@ -319,39 +319,15 @@ Tests use **H2 in-memory database** — no MySQL or Twilio required.
 <!-- 3. Go to repo Settings → Pages → Source: main branch /docs folder -->
 <!-- 4. Your report will be live at: https://naveenparamasivam.github.io/jobconnect-backend/surefire-report.html -->
 
-> 📊 **Test Report:** [View on GitHub Pages →](https://naveenparamasivam.github.io/jobconnect-backend/surefire-report.html)
+> 📊 **Test Report HTML Format:** [View on GitHub Pages →](https://naveenparamasivam.github.io/jobconnect-backend/index.html)
 >
-> *(See [How to host test report on GitHub Pages](#how-to-host-test-report-on-github-pages) below)*
+>  📊 **Test Report Exported from Intellij:** [Test Results](./Test%20Results%20-%20All_in_jobconnect-backend.html)
 
 <!-- PASTE SCREENSHOT OF TEST RESULTS HERE -->
 <!-- ![Test Results](docs/test-results-screenshot.png) -->
 
-### How to Host Test Report on GitHub Pages
 
-```bash
-# 1. Generate the Surefire HTML report
-./mvnw surefire-report:report
 
-# 2. Create docs folder and copy report into it
-mkdir -p docs
-cp -r target/site/* docs/
-
-# 3. Commit and push
-git add docs/
-git commit -m "Add test report to GitHub Pages"
-git push
-
-# 4. Enable GitHub Pages:
-#    → Go to repo Settings → Pages
-#    → Source: Deploy from branch
-#    → Branch: main, Folder: /docs
-#    → Click Save
-
-# 5. Your report will be live at:
-#    https://naveenparamasivam.github.io/jobconnect-backend/surefire-report.html
-```
-
----
 
 ## Deployment
 

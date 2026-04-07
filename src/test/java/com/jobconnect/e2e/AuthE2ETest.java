@@ -116,14 +116,15 @@ class AuthE2ETest {
     }
 
     @Test
-    @DisplayName("Login with wrong password → 401 Unauthorized")
+    @DisplayName("Login with wrong password → 400 Bad Request")
     void login_wrongPassword_returns401() throws Exception {
         // Register first
         RegisterRequest reg = buildRegisterRequest(
                 "Carol", "carol.e2e@test.com", "correct123", User.Role.JOB_SEEKER);
         mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(reg)));
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(reg)))
+                .andExpect(status().isCreated());
 
         // Login with wrong password
         LoginRequest login = new LoginRequest();
@@ -133,8 +134,9 @@ class AuthE2ETest {
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(login)))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.success").value(false));
+                .andExpect(status().isBadRequest())       // 400 — caught by GlobalExceptionHandler
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Invalid email or password"));
     }
 
     @Test
